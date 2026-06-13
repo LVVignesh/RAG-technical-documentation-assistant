@@ -133,17 +133,32 @@ On startup, if the vector database is empty, the application automatically inges
 
 ## Quick Start Test
 
-### Test via Swagger UI (Recommended)
+### Test via Swagger UI (Recommended - No terminal needed)
 1. Start the server: `.\.venv\Scripts\uvicorn main:app --reload`
-2. Open: http://localhost:8000/docs
-3. Click on `/query` endpoint → **Try it out**
-4. Enter a test question and submit to see live responses
+2. Open browser: http://localhost:8000/docs
+3. Click `/query` endpoint → **Try it out**
+4. Enter test question and execute to see live responses
 
-### Test via curl (Terminal)
+### Test via Terminal (PowerShell - Windows)
+```powershell
+# Query endpoint
+$headers = @{"Content-Type"="application/json"}
+$body = @{"question"="How does dependency injection work in FastAPI?"} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://localhost:8000/query" -Method POST -Headers $headers -Body $body
+
+# List documents
+Invoke-WebRequest -Uri "http://localhost:8000/documents" -Method GET
+```
+
+### Test via Terminal (Bash - Linux/macOS)
 ```bash
+# Query endpoint
 curl -X POST "http://localhost:8000/query" \
   -H "Content-Type: application/json" \
   -d '{"question": "How does dependency injection work in FastAPI?"}'
+
+# List documents
+curl "http://localhost:8000/documents"
 ```
 
 ---
@@ -158,6 +173,14 @@ Access the auto-generated Swagger UI at: `http://localhost:8000/docs`
 
 #### `POST /query` — Submit a question
 
+**PowerShell (Windows):**
+```powershell
+$headers = @{"Content-Type"="application/json"}
+$body = @{"question"="How does dependency injection work in FastAPI?"} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://localhost:8000/query" -Method POST -Headers $headers -Body $body
+```
+
+**Bash (Linux/macOS):**
 ```bash
 curl -X POST "http://localhost:8000/query" \
   -H "Content-Type: application/json" \
@@ -175,27 +198,14 @@ curl -X POST "http://localhost:8000/query" \
 }
 ```
 
-#### `POST /ingest` — Ingest a new document (file upload)
-
-```bash
-curl -X POST "http://localhost:8000/ingest" \
-  -F "file=@./data/fastapi_intro.md"
-```
-
-**Response:**
-```json
-{"status": "success", "message": "Successfully indexed file: document.md"}
-```
-
-#### `POST /ingest` — Ingest a new document (URL)
-
-```bash
-curl -X POST "http://localhost:8000/ingest" \
-  -F "url=https://fastapi.tiangolo.com/tutorial/dependencies/"
-```
-
 #### `GET /documents` — List indexed documents
 
+**PowerShell (Windows):**
+```powershell
+Invoke-WebRequest -Uri "http://localhost:8000/documents" -Method GET | ConvertFrom-Json
+```
+
+**Bash (Linux/macOS):**
 ```bash
 curl "http://localhost:8000/documents"
 ```
@@ -210,8 +220,51 @@ curl "http://localhost:8000/documents"
 }
 ```
 
+#### `POST /ingest` — Ingest a new document (file upload)
+
+**PowerShell (Windows):**
+```powershell
+$filePath = "./data/fastapi_intro.md"
+$form = @{file = Get-Item $filePath}
+Invoke-WebRequest -Uri "http://localhost:8000/ingest" -Method POST -Form $form
+```
+
+**Bash (Linux/macOS):**
+```bash
+curl -X POST "http://localhost:8000/ingest" \
+  -F "file=@./data/fastapi_intro.md"
+```
+
+**Response:**
+```json
+{"status": "success", "message": "Successfully indexed file: fastapi_intro.md"}
+```
+
+#### `POST /ingest` — Ingest a new document (URL)
+
+**PowerShell (Windows):**
+```powershell
+$headers = @{"Content-Type"="application/json"}
+$body = @{"url"="https://fastapi.tiangolo.com/tutorial/dependencies/"} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://localhost:8000/ingest" -Method POST -Headers $headers -Body $body
+```
+
+**Bash (Linux/macOS):**
+```bash
+curl -X POST "http://localhost:8000/ingest" \
+  -d "url=https://fastapi.tiangolo.com/tutorial/dependencies/"
+```
+
 #### `POST /feedback` — Submit feedback
 
+**PowerShell (Windows):**
+```powershell
+$headers = @{"Content-Type"="application/json"}
+$body = @{"rating"="thumbs_up"; "comment"="Very helpful answer!"} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://localhost:8000/feedback" -Method POST -Headers $headers -Body $body
+```
+
+**Bash (Linux/macOS):**
 ```bash
 curl -X POST "http://localhost:8000/feedback" \
   -H "Content-Type: application/json" \
