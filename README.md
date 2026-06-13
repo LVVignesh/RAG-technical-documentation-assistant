@@ -131,6 +131,23 @@ On startup, if the vector database is empty, the application automatically inges
 
 ---
 
+## Quick Start Test
+
+### Test via Swagger UI (Recommended)
+1. Start the server: `.\.venv\Scripts\uvicorn main:app --reload`
+2. Open: http://localhost:8000/docs
+3. Click on `/query` endpoint → **Try it out**
+4. Enter a test question and submit to see live responses
+
+### Test via curl (Terminal)
+```bash
+curl -X POST "http://localhost:8000/query" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "How does dependency injection work in FastAPI?"}'
+```
+
+---
+
 ## API Reference
 
 ### Interactive Docs
